@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  postgresql:
+    image: postgres:11
+    restart: always
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+    ports:
+      - 15432:5432
+    environment:
+      POSTGRES_PASSWORD: park0070!
+      POSTGRES_USER: postgres
+      POSTGRES_DB: monolithic
+  #pgadmin:
+  #  image: dpage/pgadmin4
+  #  container_name : pg_admin
+  #  environment :
+  #    - PGADMIN_DEFAULT_EMAIL=sgold0073@naver.com
+  #    - PGADMIN_DEFAULT_PASSWORD=password
+  #  ports :
+  #    - 5555:80
+  #  volumes :
+  #    - /mnt/pgadmin/data:/var/lib/pgadmin
+  node:
+    image: "node:14"
+    depends_on:
+      - postgresql
+    working_dir: /usr/src/app
+    environment:
+      - DB_USER=postgres
+      - DB_PW=park0070!
+      - DB_HOST=postgresql
+      - DATABASE_URL= postgres://postgres:park0070!@postgresql:5432/monolithic
+    volumes:
+      - ./src:/usr/src/app
+    ports:
+      - "9150:9150"
+    command: bash -c "npm install && npm start"
